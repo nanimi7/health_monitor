@@ -15,18 +15,15 @@ export default function UserProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Form states
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [height, setHeight] = useState('');
 
-  // Disease modal states
   const [showDiseaseModal, setShowDiseaseModal] = useState(false);
   const [editingDisease, setEditingDisease] = useState<Disease | null>(null);
   const [diseaseName, setDiseaseName] = useState('');
   const [medication, setMedication] = useState('');
 
-  // Delete confirmation
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -96,22 +93,13 @@ export default function UserProfilePage() {
     try {
       if (editingDisease) {
         const diseaseRef = doc(db, 'users', user.uid, 'diseases', editingDisease.id);
-        await updateDoc(diseaseRef, {
-          name: diseaseName,
-          medication,
-        });
+        await updateDoc(diseaseRef, { name: diseaseName, medication });
         setDiseases(diseases.map(d =>
-          d.id === editingDisease.id
-            ? { ...d, name: diseaseName, medication }
-            : d
+          d.id === editingDisease.id ? { ...d, name: diseaseName, medication } : d
         ));
       } else {
         const diseasesRef = collection(db, 'users', user.uid, 'diseases');
-        const newDisease = {
-          name: diseaseName,
-          medication,
-          createdAt: new Date(),
-        };
+        const newDisease = { name: diseaseName, medication, createdAt: new Date() };
         const docRef = await addDoc(diseasesRef, newDisease);
         setDiseases([...diseases, { id: docRef.id, ...newDisease }]);
       }
@@ -128,7 +116,6 @@ export default function UserProfilePage() {
 
   const handleDeleteDisease = async (diseaseId: string) => {
     if (!user) return;
-
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
@@ -152,13 +139,11 @@ export default function UserProfilePage() {
 
     try {
       await deleteDoc(doc(db, 'users', user.uid, 'profile', 'data'));
-
       const diseasesRef = collection(db, 'users', user.uid, 'diseases');
       const diseasesSnap = await getDocs(diseasesRef);
       for (const diseaseDoc of diseasesSnap.docs) {
         await deleteDoc(diseaseDoc.ref);
       }
-
       await deleteUser(user);
       await logout();
     } catch (error) {
@@ -177,97 +162,65 @@ export default function UserProfilePage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-[#1F2937]">사용자 정보</h2>
+      <h2 className="text-lg font-bold text-[#1F2937]">사용자 정보</h2>
 
-      {/* User Profile Card */}
-      <div className="bg-[#E8EDF3] rounded-xl p-5">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-[#FCD34D] rounded-full flex items-center justify-center text-3xl">
-            {gender === 'female' ? '👩' : '👨'}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-[#1F2937]">
-              {user?.email?.split('@')[0] || '사용자'}
-            </h3>
-            <p className="text-sm text-[#6B7280]">
-              생년월일: {birthDate || '미입력'} | {gender === 'male' ? '남' : '여'}
-            </p>
-            {diseases.length > 0 && (
-              <p className="text-sm text-[#6B7280]">
-                병명: {diseases.map(d => d.name).join(', ')}
-              </p>
-            )}
-          </div>
-        </div>
-        <button
-          onClick={() => {/* TODO: Edit profile modal */}}
-          className="mt-4 px-6 py-2 bg-[#3B82F6] text-white text-sm font-medium rounded-md hover:bg-[#2563EB] transition-colors"
-        >
-          수정
-        </button>
-      </div>
+      {/* 기본 정보 */}
+      <div className="card !p-4">
+        <h3 className="font-semibold mb-3">기본 정보</h3>
 
-      {/* Basic Info */}
-      <div className="card">
-        <h3 className="text-lg font-semibold mb-4">기본 정보</h3>
-
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-[#4B5563] mb-1">
-              이메일
-            </label>
+            <label className="block text-sm text-[#6B7280] mb-1">이메일</label>
             <input
               type="email"
               value={user?.email || ''}
               disabled
-              className="input-field bg-[#F9FAFB]"
+              className="input-field bg-[#F9FAFB] text-sm py-2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#4B5563] mb-1">
+            <label className="block text-sm text-[#6B7280] mb-1">
               생년월일 <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
-              className="input-field"
+              className="input-field text-sm py-2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#4B5563] mb-1">
+            <label className="block text-sm text-[#6B7280] mb-1">
               성별 <span className="text-red-500">*</span>
             </label>
-            <div className="flex gap-4">
+            <div className="flex gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name="gender"
-                  value="male"
                   checked={gender === 'male'}
                   onChange={() => setGender('male')}
                   className="w-4 h-4 text-[#7C3AED]"
                 />
-                <span>남성</span>
+                <span className="text-sm">남성</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name="gender"
-                  value="female"
                   checked={gender === 'female'}
                   onChange={() => setGender('female')}
                   className="w-4 h-4 text-[#7C3AED]"
                 />
-                <span>여성</span>
+                <span className="text-sm">여성</span>
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#4B5563] mb-1">
+            <label className="block text-sm text-[#6B7280] mb-1">
               키 (cm) <span className="text-red-500">*</span>
             </label>
             <input
@@ -275,7 +228,7 @@ export default function UserProfilePage() {
               value={height}
               onChange={(e) => setHeight(e.target.value)}
               placeholder="170"
-              className="input-field"
+              className="input-field text-sm py-2"
               min="100"
               max="250"
             />
@@ -284,17 +237,17 @@ export default function UserProfilePage() {
           <button
             onClick={handleSaveProfile}
             disabled={saving || !birthDate || !height}
-            className="btn-primary w-full disabled:opacity-50"
+            className="btn-primary w-full py-2.5 text-sm disabled:opacity-50"
           >
             {saving ? '저장 중...' : '저장'}
           </button>
         </div>
       </div>
 
-      {/* Diseases */}
-      <div className="card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">보유 질병</h3>
+      {/* 보유 질병 */}
+      <div className="card !p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold">보유 질병</h3>
           <button
             onClick={() => {
               setEditingDisease(null);
@@ -302,42 +255,40 @@ export default function UserProfilePage() {
               setMedication('');
               setShowDiseaseModal(true);
             }}
-            className="btn-primary flex items-center gap-1 text-sm py-2"
+            className="btn-primary flex items-center gap-1 text-xs py-1.5 px-3"
           >
-            <Plus className="w-4 h-4" />
-            질병 추가
+            <Plus className="w-3.5 h-3.5" />
+            추가
           </button>
         </div>
 
         {diseases.length === 0 ? (
-          <p className="text-[#9CA3AF] text-center py-8">
+          <p className="text-[#9CA3AF] text-center py-6 text-sm">
             등록된 질병이 없습니다.
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {diseases.map((disease) => (
               <div
                 key={disease.id}
-                className="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg"
+                className="flex items-center justify-between p-3 bg-[#F9FAFB] rounded-lg"
               >
                 <div>
-                  <p className="font-medium">{disease.name}</p>
+                  <p className="font-medium text-sm">{disease.name}</p>
                   {disease.medication && (
-                    <p className="text-sm text-[#6B7280]">
-                      복용 약물: {disease.medication}
-                    </p>
+                    <p className="text-xs text-[#6B7280]">복용: {disease.medication}</p>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => handleEditDisease(disease)}
-                    className="p-2 text-[#6B7280] hover:text-[#7C3AED]"
+                    className="p-1.5 text-[#6B7280] hover:text-[#7C3AED]"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteDisease(disease.id)}
-                    className="p-2 text-[#6B7280] hover:text-red-500"
+                    className="p-1.5 text-[#6B7280] hover:text-red-500"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -347,11 +298,11 @@ export default function UserProfilePage() {
           </div>
         )}
 
-        {/* 회원탈퇴 - 작은 회색 텍스트 */}
-        <div className="mt-8 pt-4 text-center">
+        {/* 회원탈퇴 */}
+        <div className="mt-6 text-center">
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-sm text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
+            className="text-xs text-[#9CA3AF] hover:text-[#6B7280]"
           >
             회원탈퇴
           </button>
@@ -361,14 +312,14 @@ export default function UserProfilePage() {
       {/* Disease Modal */}
       {showDiseaseModal && (
         <div className="modal-overlay" onClick={() => setShowDiseaseModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="modal-content !p-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-semibold mb-4">
               {editingDisease ? '질병 수정' : '질병 추가'}
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-[#4B5563] mb-1">
+                <label className="block text-sm text-[#6B7280] mb-1">
                   질병명 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -376,35 +327,33 @@ export default function UserProfilePage() {
                   value={diseaseName}
                   onChange={(e) => setDiseaseName(e.target.value)}
                   placeholder="예: 편두통"
-                  className="input-field"
+                  className="input-field text-sm py-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#4B5563] mb-1">
-                  복용 약물명
-                </label>
+                <label className="block text-sm text-[#6B7280] mb-1">복용 약물명</label>
                 <input
                   type="text"
                   value={medication}
                   onChange={(e) => setMedication(e.target.value)}
                   placeholder="예: 타이레놀"
-                  className="input-field"
+                  className="input-field text-sm py-2"
                 />
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-2 mt-4">
               <button
                 onClick={() => setShowDiseaseModal(false)}
-                className="btn-secondary flex-1"
+                className="btn-secondary flex-1 py-2 text-sm"
               >
                 취소
               </button>
               <button
                 onClick={handleSaveDisease}
                 disabled={!diseaseName.trim()}
-                className="btn-primary flex-1 disabled:opacity-50"
+                className="btn-primary flex-1 py-2 text-sm disabled:opacity-50"
               >
                 저장
               </button>
@@ -416,24 +365,22 @@ export default function UserProfilePage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold mb-2 text-red-600">
-              정말 탈퇴하시겠습니까?
-            </h3>
-            <p className="text-sm text-[#6B7280] mb-6">
-              모든 데이터가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다.
+          <div className="modal-content !p-4" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-semibold mb-2 text-red-600">정말 탈퇴하시겠습니까?</h3>
+            <p className="text-sm text-[#6B7280] mb-4">
+              모든 데이터가 영구적으로 삭제됩니다.
             </p>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="btn-secondary flex-1"
+                className="btn-secondary flex-1 py-2 text-sm"
               >
                 취소
               </button>
               <button
                 onClick={handleDeleteAccount}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="flex-1 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700"
               >
                 탈퇴하기
               </button>
