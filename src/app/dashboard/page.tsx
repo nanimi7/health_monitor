@@ -6,7 +6,7 @@ import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, addDoc, updateDoc 
 import { db } from '@/lib/firebase';
 import { deleteUser } from 'firebase/auth';
 import { UserProfile, Disease } from '@/types';
-import { Plus, Edit2, Trash2, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function UserProfilePage() {
   const { user, logout } = useAuth();
@@ -39,7 +39,6 @@ export default function UserProfilePage() {
     if (!user) return;
 
     try {
-      // Load profile
       const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
       const profileSnap = await getDoc(profileRef);
 
@@ -51,7 +50,6 @@ export default function UserProfilePage() {
         setHeight(data.height?.toString() || '');
       }
 
-      // Load diseases
       const diseasesRef = collection(db, 'users', user.uid, 'diseases');
       const diseasesSnap = await getDocs(diseasesRef);
       const diseasesList: Disease[] = [];
@@ -97,7 +95,6 @@ export default function UserProfilePage() {
 
     try {
       if (editingDisease) {
-        // Update existing disease
         const diseaseRef = doc(db, 'users', user.uid, 'diseases', editingDisease.id);
         await updateDoc(diseaseRef, {
           name: diseaseName,
@@ -109,7 +106,6 @@ export default function UserProfilePage() {
             : d
         ));
       } else {
-        // Add new disease
         const diseasesRef = collection(db, 'users', user.uid, 'diseases');
         const newDisease = {
           name: diseaseName,
@@ -155,17 +151,14 @@ export default function UserProfilePage() {
     if (!user) return;
 
     try {
-      // Delete user data from Firestore
       await deleteDoc(doc(db, 'users', user.uid, 'profile', 'data'));
 
-      // Delete diseases
       const diseasesRef = collection(db, 'users', user.uid, 'diseases');
       const diseasesSnap = await getDocs(diseasesRef);
       for (const diseaseDoc of diseasesSnap.docs) {
         await deleteDoc(diseaseDoc.ref);
       }
 
-      // Delete Firebase Auth user
       await deleteUser(user);
       await logout();
     } catch (error) {
@@ -183,8 +176,36 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <h2 className="text-2xl font-bold text-[#1F2937]">사용자 정보</h2>
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold text-[#1F2937]">사용자 정보</h2>
+
+      {/* User Profile Card */}
+      <div className="bg-[#E8EDF3] rounded-xl p-5">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-[#FCD34D] rounded-full flex items-center justify-center text-3xl">
+            {gender === 'female' ? '👩' : '👨'}
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-[#1F2937]">
+              {user?.email?.split('@')[0] || '사용자'}
+            </h3>
+            <p className="text-sm text-[#6B7280]">
+              생년월일: {birthDate || '미입력'} | {gender === 'male' ? '남' : '여'}
+            </p>
+            {diseases.length > 0 && (
+              <p className="text-sm text-[#6B7280]">
+                병명: {diseases.map(d => d.name).join(', ')}
+              </p>
+            )}
+          </div>
+        </div>
+        <button
+          onClick={() => {/* TODO: Edit profile modal */}}
+          className="mt-4 px-6 py-2 bg-[#3B82F6] text-white text-sm font-medium rounded-md hover:bg-[#2563EB] transition-colors"
+        >
+          수정
+        </button>
+      </div>
 
       {/* Basic Info */}
       <div className="card">
@@ -325,24 +346,15 @@ export default function UserProfilePage() {
             ))}
           </div>
         )}
-      </div>
 
-      {/* Delete Account */}
-      <div className="card border-red-200">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-red-600">회원 탈퇴</h3>
-            <p className="text-sm text-[#6B7280] mt-1 mb-4">
-              회원 탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.
-            </p>
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="px-4 py-2 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50"
-            >
-              회원 탈퇴
-            </button>
-          </div>
+        {/* 회원탈퇴 - 작은 회색 텍스트 */}
+        <div className="mt-8 pt-4 text-center">
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="text-sm text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
+          >
+            회원탈퇴
+          </button>
         </div>
       </div>
 

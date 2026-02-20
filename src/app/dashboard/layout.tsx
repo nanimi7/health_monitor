@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Navigation from '@/components/Navigation';
-import { LogOut } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -32,7 +31,7 @@ export default function DashboardLayout({
 
   if (!mounted || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
         <div className="w-12 h-12 border-4 border-[#7C3AED] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -43,31 +42,32 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
-      <header className="bg-white border-b border-[#E5E7EB] sticky top-0 z-40">
-        <div className="flex items-center justify-between px-4 py-3 md:px-6">
-          <h1 className="text-xl font-bold text-[#7C3AED]">Health Monitor</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-[#6B7280] hidden md:block">
+    <div className="min-h-screen bg-[#F5F5F5]">
+      {/* Header */}
+      <header className="bg-[#2C3E50] text-white sticky top-0 z-40">
+        <div className="max-w-lg mx-auto flex items-center justify-between px-4 py-3">
+          <h1 className="text-lg font-bold">Health Monitor</h1>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-300">
               {user.email}
             </span>
             <button
               onClick={handleLogout}
-              className="p-2 text-[#6B7280] hover:text-[#7C3AED] transition-colors"
-              title="로그아웃"
+              className="px-3 py-1.5 bg-[#E74C3C] text-white text-sm rounded-md hover:bg-[#C0392B] transition-colors"
             >
-              <LogOut className="w-5 h-5" />
+              로그아웃
             </button>
           </div>
         </div>
       </header>
 
-      <div className="flex flex-col md:flex-row">
-        <Navigation />
-        <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6">
-          {children}
-        </main>
-      </div>
+      {/* Main Content */}
+      <main className="max-w-lg mx-auto px-4 py-4 pb-24">
+        {children}
+      </main>
+
+      {/* Bottom Navigation */}
+      <Navigation />
     </div>
   );
 }
