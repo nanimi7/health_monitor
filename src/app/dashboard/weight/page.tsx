@@ -236,6 +236,9 @@ export default function WeightPage() {
           <p className="text-sm text-[#6B7280] mt-4 pt-4 border-t border-[#E5E7EB]">
             {bmiInfo.description}
           </p>
+          <p className="text-xs text-[#9CA3AF] mt-2">
+            * 본 서비스는 의학적 진단이나 치료를 대체하지 않습니다.
+          </p>
         </div>
       )}
 
