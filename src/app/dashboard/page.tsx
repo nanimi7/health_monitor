@@ -298,15 +298,16 @@ export default function UserProfilePage() {
           </div>
         )}
 
-        {/* 회원탈퇴 */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="text-xs text-[#9CA3AF] hover:text-[#6B7280]"
-          >
-            회원탈퇴
-          </button>
-        </div>
+      </div>
+
+      {/* 회원탈퇴 */}
+      <div className="text-center pt-2">
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className="text-xs text-[#9CA3AF] hover:text-[#6B7280]"
+        >
+          회원탈퇴
+        </button>
       </div>
 
       {/* Disease Modal */}
