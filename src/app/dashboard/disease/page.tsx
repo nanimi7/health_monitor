@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { doc, getDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { UserProfile, Disease, SymptomRecord } from '@/types';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Calendar from '@/components/Calendar';
 import { intensityLevels, getIntensityColor } from '@/lib/intensity';
@@ -31,13 +31,7 @@ export default function DiseasePage() {
   const [occurredTime, setOccurredTime] = useState('');
   const [description, setDescription] = useState('');
 
-  useEffect(() => {
-    if (user) {
-      loadData();
-    }
-  }, [user]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -83,7 +77,13 @@ export default function DiseasePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, router]);
+
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user, loadData]);
 
   const recordedDates = useMemo(() => {
     return new Set(symptoms.map(s => s.date));

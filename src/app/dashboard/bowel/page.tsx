@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { doc, getDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -44,13 +44,7 @@ export default function BowelPage() {
   const [amount, setAmount] = useState<'small' | 'littleMore' | 'normal' | 'much' | 'veryMuch'>('normal');
   const [residualFeeling, setResidualFeeling] = useState<'none' | 'little' | 'much'>('none');
 
-  useEffect(() => {
-    if (user) {
-      loadData();
-    }
-  }, [user]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -77,7 +71,13 @@ export default function BowelPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, router]);
+
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user, loadData]);
 
   const recordedDates = useMemo(() => {
     return new Set(bowelRecords.map(r => r.date));

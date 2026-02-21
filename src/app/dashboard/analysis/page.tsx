@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { UserProfile, Disease, SymptomRecord } from '@/types';
-import { format, subDays, parseISO, isAfter, isBefore } from 'date-fns';
+import { format, subDays, parseISO, isBefore } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { calculateAge } from '@/lib/bmi';
-import { AlertCircle, Brain, Loader2, Activity, Clock, Hospital, MessageSquare, TrendingUp } from 'lucide-react';
+import { AlertCircle, Brain, Loader2, Activity } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 type PeriodOption = '7' | '14' | '30' | '60' | '90';
@@ -29,13 +29,7 @@ export default function AnalysisPage() {
   const [selectedDiseaseId, setSelectedDiseaseId] = useState('');
   const [period, setPeriod] = useState<PeriodOption>('30');
 
-  useEffect(() => {
-    if (user) {
-      loadData();
-    }
-  }, [user]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -79,7 +73,13 @@ export default function AnalysisPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, router]);
+
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user, loadData]);
 
   const selectedDisease = useMemo(() => {
     return diseases.find(d => d.id === selectedDiseaseId);
