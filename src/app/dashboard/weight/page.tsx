@@ -212,59 +212,66 @@ export default function WeightPage() {
       <h2 className="text-xl font-bold text-[#1F2937]">체중 관리</h2>
 
       {/* BMI Card */}
-      {bmiInfo && (
-        <div className="bg-white rounded-lg p-4 border border-[#E5E7EB]">
-          {/* Header with icon */}
-          <div className="flex items-center gap-2 mb-3">
-            {/* Color bar icon */}
-            <div className="flex items-end gap-0.5 h-5">
-              <div className="w-1.5 h-3 bg-[#3B82F6] rounded-sm"></div>
-              <div className="w-1.5 h-4 bg-[#22C55E] rounded-sm"></div>
-              <div className="w-1.5 h-5 bg-[#EF4444] rounded-sm"></div>
-            </div>
-            <h3 className="text-base font-bold text-[#1F2937]">
-              {format(new Date(), 'M')}월 체중 현황
-            </h3>
-            <button
-              onClick={() => setShowBmiInfo(true)}
-              className="text-[#9CA3AF] hover:text-[#7C3AED] transition-colors ml-auto"
-              aria-label="BMI 정보 보기"
-            >
-              <HelpCircle className="w-4 h-4" />
-            </button>
+      <div className="bg-white rounded-lg p-4 border border-[#E5E7EB]">
+        {/* Header with icon */}
+        <div className="flex items-center gap-2 mb-3">
+          {/* Color bar icon */}
+          <div className="flex items-end gap-0.5 h-5">
+            <div className="w-1.5 h-3 bg-[#3B82F6] rounded-sm"></div>
+            <div className="w-1.5 h-4 bg-[#22C55E] rounded-sm"></div>
+            <div className="w-1.5 h-5 bg-[#EF4444] rounded-sm"></div>
           </div>
-
-          {/* BMI & Weight Display */}
-          <div className="flex items-center gap-6 mb-3">
-            <div>
-              <p className="text-xs text-[#6B7280] mb-0.5">현재 BMI</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold" style={{ color: bmiInfo.color }}>{bmiInfo.value.toFixed(1)}</span>
-                <span className="text-sm font-medium" style={{ color: bmiInfo.color }}>{bmiInfo.category}</span>
-              </div>
-            </div>
-            <div className="w-px h-10 bg-[#E5E7EB]"></div>
-            <div>
-              <p className="text-xs text-[#6B7280] mb-0.5">최근 체중</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-[#1F2937]">{latestWeight?.weight}</span>
-                <span className="text-sm text-[#6B7280]">kg</span>
-                {latestWeight && <span className="text-xs text-[#9CA3AF] ml-1">({format(parseISO(latestWeight.date), 'M/d', { locale: ko })})</span>}
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <p className="text-sm text-[#6B7280]">
-            {bmiInfo.description}
-          </p>
-
-          {/* Disclaimer */}
-          <p className="text-xs text-[#9CA3AF] mt-3 pt-3 border-t border-[#F3F4F6]">
-            * 대한비만학회 기준. 의료 진단이 아니며 건강 관련 결정 시 전문가 상담 권장.
-          </p>
+          <h3 className="text-base font-bold text-[#1F2937]">
+            {format(new Date(), 'M')}월 체중 현황
+          </h3>
+          <button
+            onClick={() => setShowBmiInfo(true)}
+            className="text-[#9CA3AF] hover:text-[#7C3AED] transition-colors ml-auto"
+            aria-label="BMI 정보 보기"
+          >
+            <HelpCircle className="w-4 h-4" />
+          </button>
         </div>
-      )}
+
+        {bmiInfo ? (
+          <>
+            {/* BMI & Weight Display */}
+            <div className="flex items-center gap-6 mb-3">
+              <div>
+                <p className="text-xs text-[#6B7280] mb-0.5">현재 BMI</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold" style={{ color: bmiInfo.color }}>{bmiInfo.value.toFixed(1)}</span>
+                  <span className="text-sm font-medium" style={{ color: bmiInfo.color }}>{bmiInfo.category}</span>
+                </div>
+              </div>
+              <div className="w-px h-10 bg-[#E5E7EB]"></div>
+              <div>
+                <p className="text-xs text-[#6B7280] mb-0.5">최근 체중</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold text-[#1F2937]">{latestWeight?.weight}</span>
+                  <span className="text-sm text-[#6B7280]">kg</span>
+                  {latestWeight && <span className="text-xs text-[#9CA3AF] ml-1">({format(parseISO(latestWeight.date), 'M/d', { locale: ko })})</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p className="text-sm text-[#6B7280]">
+              {bmiInfo.description}
+            </p>
+          </>
+        ) : (
+          /* No data message */
+          <p className="text-sm text-[#4B5563]">
+            이번 달 기록이 없습니다. 체중 기록을 시작해보세요!
+          </p>
+        )}
+
+        {/* Disclaimer */}
+        <p className="text-xs text-[#9CA3AF] mt-3 pt-3 border-t border-[#F3F4F6]">
+          * 대한비만학회 기준. 의료 진단이 아니며 건강 관련 결정 시 전문가 상담 권장.
+        </p>
+      </div>
 
       {/* Calendar */}
       <Calendar
@@ -396,11 +403,11 @@ export default function WeightPage() {
       {/* BMI Info Bottom Sheet */}
       {showBmiInfo && (
         <div
-          className="fixed inset-0 bg-black/40 z-50 flex items-end justify-center"
+          className="fixed inset-0 bg-black/40 z-50 flex items-end justify-center px-4"
           onClick={() => setShowBmiInfo(false)}
         >
           <div
-            className="bg-white w-full max-w-4xl rounded-t-2xl p-4 pb-16 animate-slide-up max-h-[80vh] overflow-y-auto mx-4"
+            className="bg-white w-full max-w-lg rounded-t-2xl p-4 pb-16 animate-slide-up max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -476,13 +483,10 @@ export default function WeightPage() {
               </div>
 
               {/* 면책문구 */}
-              <div className="mt-6 pt-4 border-t border-[#E5E7EB]">
+              <div className="mt-6 pt-4 border-t border-[#E5E7EB] mb-8">
                 <p className="text-xs text-[#9CA3AF] leading-relaxed">
-                  ⚠️ 면책조항: 본 서비스에서 제공하는 BMI 정보는 일반적인 건강 정보 제공 목적으로만
-                  사용되며, 의학적 진단이나 치료를 대체할 수 없습니다. 건강에 관한 결정을 내리기 전에
-                  반드시 의료 전문가와 상담하시기 바랍니다. 본 서비스는 제공된 정보의 정확성, 완전성,
-                  유용성에 대해 어떠한 보증도 하지 않으며, 이 정보의 사용으로 인해 발생하는 어떠한
-                  손해에 대해서도 책임을 지지 않습니다.
+                  * 본 정보는 건강 참고용이며 의학적 진단을 대체하지 않습니다.<br />
+                  건강 관련 결정 시 반드시 전문가와 상담하세요.
                 </p>
               </div>
             </div>
