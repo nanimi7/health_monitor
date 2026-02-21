@@ -111,12 +111,12 @@ export default function Calendar({
             className={`
               relative flex flex-col items-center justify-start
               min-h-[72px] md:min-h-[80px] p-2
-              bg-[#F9FAFB] rounded-lg cursor-pointer
+              bg-white rounded-lg cursor-pointer
               transition-all duration-200
-              hover:bg-[#EDE9FE] hover:shadow-sm
+              hover:bg-[#F3F4F6] hover:shadow-sm
               ${!isCurrentMonth ? 'opacity-40' : ''}
-              ${isSelected ? 'bg-[#EDE9FE] ring-2 ring-[#7C3AED]' : ''}
-              ${isToday && !isSelected ? 'ring-2 ring-[#7C3AED] ring-opacity-50' : ''}
+              ${isSelected ? 'bg-[#E5E7EB] ring-2 ring-[#9CA3AF]' : ''}
+              ${isToday && !isSelected ? 'ring-2 ring-[#6B7280] ring-opacity-50' : ''}
             `}
           >
             <span className={`text-lg font-semibold ${
@@ -153,7 +153,7 @@ export default function Calendar({
   };
 
   return (
-    <div className="card bg-white">
+    <div className="card bg-[#F9FAFB]">
       {renderHeader()}
       {renderDays()}
       {renderCells()}
