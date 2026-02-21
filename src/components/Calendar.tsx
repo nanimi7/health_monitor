@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, addMonths, subMonths, addYears, subYears } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 interface CalendarProps {
   selectedDate: Date;
@@ -26,40 +26,40 @@ export default function Calendar({
   const nextYear = () => setCurrentMonth(addYears(currentMonth, 1));
 
   const renderHeader = () => (
-    <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E7EB]">
-      <div className="flex items-center gap-1">
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-3">
         <button
           onClick={prevYear}
-          className="p-2 hover:bg-[#F3F4F6] rounded-md transition-colors"
+          className="text-[#B0B0B0] hover:text-[#888] transition-colors text-base"
           aria-label="이전 년도"
         >
-          <ChevronsLeft className="w-5 h-5 text-[#6B7280]" />
+          «
         </button>
         <button
           onClick={prevMonth}
-          className="p-2 hover:bg-[#F3F4F6] rounded-md transition-colors"
+          className="text-[#B0B0B0] hover:text-[#888] transition-colors text-base"
           aria-label="이전 월"
         >
-          <ChevronLeft className="w-5 h-5 text-[#6B7280]" />
+          ‹
         </button>
       </div>
-      <h3 className="text-xl font-bold text-[#1F2937]">
+      <h3 className="text-base font-bold text-[#1F2937]">
         {format(currentMonth, 'yyyy년 M월', { locale: ko })}
       </h3>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
         <button
           onClick={nextMonth}
-          className="p-2 hover:bg-[#F3F4F6] rounded-md transition-colors"
+          className="text-[#B0B0B0] hover:text-[#888] transition-colors text-base"
           aria-label="다음 월"
         >
-          <ChevronRight className="w-5 h-5 text-[#6B7280]" />
+          ›
         </button>
         <button
           onClick={nextYear}
-          className="p-2 hover:bg-[#F3F4F6] rounded-md transition-colors"
+          className="text-[#B0B0B0] hover:text-[#888] transition-colors text-base"
           aria-label="다음 년도"
         >
-          <ChevronsRight className="w-5 h-5 text-[#6B7280]" />
+          »
         </button>
       </div>
     </div>
@@ -68,12 +68,12 @@ export default function Calendar({
   const renderDays = () => {
     const days = ['월', '화', '수', '목', '금', '토', '일'];
     return (
-      <div className="grid grid-cols-7 gap-2 mb-2">
+      <div className="grid grid-cols-7 gap-1.5 mb-2">
         {days.map((day, index) => (
           <div
             key={day}
-            className={`text-center text-sm font-semibold py-2 ${
-              index === 6 ? 'text-red-500' : 'text-[#6B7280]'
+            className={`text-center text-xs font-medium py-1 ${
+              index === 6 ? 'text-[#E57373]' : 'text-[#9CA3AF]'
             }`}
           >
             {day}
@@ -109,51 +109,52 @@ export default function Calendar({
             key={dateStr}
             onClick={() => onSelectDate(cloneDay)}
             className={`
-              relative flex flex-col items-center justify-start
-              min-h-[72px] md:min-h-[80px] p-2
-              bg-white rounded-lg cursor-pointer
-              transition-all duration-200
-              hover:bg-[#F3F4F6] hover:shadow-sm
-              ${!isCurrentMonth ? 'opacity-40' : ''}
-              ${isSelected ? 'bg-[#E5E7EB] ring-2 ring-[#9CA3AF]' : ''}
-              ${isToday && !isSelected ? 'ring-2 ring-[#6B7280] ring-opacity-50' : ''}
+              flex flex-col items-center justify-start
+              min-h-[54px] py-1.5 px-0.5
+              bg-[#F6F6F7] rounded-md cursor-pointer
+              transition-all duration-150
+              hover:bg-[#EEEEEF]
+              ${!isCurrentMonth ? 'opacity-35' : ''}
+              ${isSelected ? 'ring-1 ring-[#7C3AED]' : ''}
             `}
           >
-            <span className={`text-lg font-semibold ${
-              isSunday ? 'text-red-500' : 'text-[#374151]'
-            }`}>
-              {format(day, 'd')}
-            </span>
+            <div className="relative">
+              <span className={`text-sm font-medium ${
+                isSunday ? 'text-[#E57373]' : 'text-[#4B5563]'
+              }`}>
+                {format(day, 'd')}
+              </span>
+              {isToday && (
+                <span className="absolute -top-0.5 -right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+              )}
+            </div>
 
             {hasRecord && dayContent ? (
-              <div className="flex flex-col items-center mt-1">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full mb-0.5"></span>
-                <div className="text-xs text-[#7C3AED] font-medium">
-                  {dayContent}
-                </div>
+              <div className="text-[10px] text-[#3B82F6] font-medium mt-0.5">
+                {dayContent}
               </div>
             ) : (
-              <Plus className={`w-4 h-4 mt-1 ${
-                isSunday ? 'text-red-300' : 'text-[#D1D5DB]'
-              }`} />
+              <Plus className={`w-3 h-3 mt-0.5 ${
+                isSunday ? 'text-[#EDAAAA]' : 'text-[#CDCDCD]'
+              }`} strokeWidth={1.5} />
             )}
           </div>
         );
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day.toString()} className="grid grid-cols-7 gap-2">
+        <div key={day.toString()} className="grid grid-cols-7 gap-1.5">
           {days}
         </div>
       );
       days = [];
     }
 
-    return <div className="space-y-2">{rows}</div>;
+    return <div className="space-y-1.5">{rows}</div>;
   };
 
   return (
-    <div className="card bg-[#F9FAFB]">
+    <div className="bg-white rounded-lg p-3 shadow-sm border border-[#E5E7EB]">
       {renderHeader()}
       {renderDays()}
       {renderCells()}
