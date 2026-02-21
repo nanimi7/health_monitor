@@ -52,7 +52,7 @@ export default function WeightChart({ data }: WeightChartProps) {
               tickFormatter={(value) => `${value}kg`}
             />
             <Tooltip
-              formatter={(value: number) => [`${value}kg`, '체중']}
+              formatter={(value) => [`${value}kg`, '체중']}
               labelFormatter={(label) => label}
               contentStyle={{
                 backgroundColor: 'white',
