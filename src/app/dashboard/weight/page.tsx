@@ -486,7 +486,7 @@ export default function WeightPage() {
               <div className="mt-6 pt-4 border-t border-[#E5E7EB] mb-8">
                 <p className="text-xs text-[#9CA3AF] leading-relaxed">
                   * 본 정보는 건강 참고용이며 의학적 진단을 대체하지 않습니다.<br />
-                  건강 관련 결정 시 반드시 전문가와 상담하세요.
+                  * 건강 관련 결정 시 반드시 전문가와 상담하세요.
                 </p>
               </div>
             </div>
